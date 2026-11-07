@@ -22,20 +22,22 @@ const TEXT_CHANNEL_TYPES = [
     ChannelType.GuildAnnouncement,
 ];
 
-const PRAVILA = `▫️ 🤠 **POŠTUJ SVE ČLANOVE**
+const PRAVILA = `# PRAVILA SERVERA 📑
+
+▸ 🤠 **POŠTUJ SVE ČLANOVE**
 Budi pristojan i ljubazan. Uvrede, diskriminacija i govor mržnje nisu dozvoljeni.
 
-▫️ 🏷️ **SPAM JE ZABRANJEN**
+▸ 🏷️ **SPAM JE ZABRANJEN**
 Zabranjeno je spamovanje porukama, tagovima, linkovima ili emojijima.
 
-▫️ 🔞 **NEPRIMJEREN SADRŽAJ**
+▸ 🔞 **NEPRIMJEREN SADRŽAJ**
 Strogo zabranjeno. ⚠️
 To uključuje NSFW, nasilni, uvredljivi ili ilegalni sadržaj bilo koje vrste.
 
-▫️ 🗂️ **POŠTUJ KANALE**
+▸ 🗂️ **POŠTUJ KANALE**
 Koristi kanale prema njihovoj namjeni. Ne šalji poruke u pogrešne kanale.
 
-▫️ 🚫 **REKLAMIRANJE**
+▸ 📵 **REKLAMIRANJE**
 Zabranjeno je dijeljenje linkova ka drugim serverima, sajtovima ili sadržaju bez odobrenja.`;
 
 function resolveTargetChannel(interaction) {
@@ -102,10 +104,12 @@ export default {
         let sentMessage;
         try {
             const embed = new EmbedBuilder()
-                .setTitle('PRAVILA SERVERA 📑')
                 .setDescription(PRAVILA)
-                .setThumbnail(interaction.client.user.displayAvatarURL({ size: 256 }))
-                .setColor(0x2b2d31);
+                .setThumbnail(
+                    interaction.guild.iconURL({ size: 256 }) ||
+                        interaction.client.user.displayAvatarURL({ size: 256 }),
+                )
+                .setColor(0x1f4fd1);
 
             const files = [];
             if (fs.existsSync(SLIKA_FAJL)) {
