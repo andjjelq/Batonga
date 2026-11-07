@@ -38,9 +38,8 @@ export default {
                 const messageContent = welcomeConfig.welcomePing ? user.toString() : null;
 
                 const embedTitle = `${user.username} je ušao/la na server`;
-                const embedFooter = welcomeConfig.welcomeEmbed?.footer
-                    ? formatWelcomeMessage(welcomeConfig.welcomeEmbed.footer, formatData)
-                    : `Dobrodošao/la na ${guild.name}!`;
+                // Uvijek na srpskom (stara podešavanja iz baze mogu imati engleski tekst).
+                const embedFooter = `Dobrodošao/la na ${guild.name}!`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 
@@ -55,7 +54,7 @@ export default {
                         .setDescription(welcomeMessage)
                         .setThumbnail(user.displayAvatarURL())
                         .addFields(
-                            { name: 'Korisnik', value: `${user.tag}`, inline: true },
+                            { name: 'Korisnik', value: user.username, inline: true },
                             { name: 'Broj članova', value: guild.memberCount.toString(), inline: true }
                         )
                         .setFooter({ text: embedFooter });
