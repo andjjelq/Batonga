@@ -35,7 +35,10 @@ export default {
                     formatData
                 );
 
-                const messageContent = welcomeConfig.welcomePing ? user.toString() : null;
+                // Tag novog člana uvijek stoji iznad poruke, a tekst ide ispod.
+                // Obavještenje (ping) dobija samo ako je "Ping" uključen u /greet dashboard.
+                const messageContent = user.toString();
+                const allowedMentions = welcomeConfig.welcomePing ? { users: [user.id] } : { parse: [] };
 
                 const embedTitle = `${user.username} je ušao/la na server`;
                 // Uvijek na srpskom (stara podešavanja iz baze mogu imati engleski tekst).
@@ -45,7 +48,8 @@ export default {
 
                 if (!canEmbed) {
                     await channel.send({
-                        content: messageContent || welcomeMessage
+                        content: `${messageContent}\n${welcomeMessage}`,
+                        allowedMentions
                     });
                 } else {
                     const embed = new EmbedBuilder()
@@ -65,9 +69,10 @@ export default {
                         embed.setImage(welcomeConfig.welcomeEmbed.image.url);
                     }
                     
-                    await channel.send({ 
+                    await channel.send({
                         content: messageContent,
-                        embeds: [embed] 
+                        allowedMentions,
+                        embeds: [embed]
                     });
                 }
             }
