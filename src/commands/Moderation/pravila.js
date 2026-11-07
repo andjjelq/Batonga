@@ -11,7 +11,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 
 // Ovde nalepi DIREKTAN link slike (mora počinjati sa https://i.imgur.com/ i završavati se sa .png ili .jpg)
-const SLIKA_LINK = 'https://i.postimg.cc/kXLf3WbC/Glossy-Blue-B-PRAVILA-Logo.png';
+const SLIKA_LINK = 'https://i.postimg.cc/CMQ3vPwj/Glossy-Blue-B-PRAVILA-Esports-Logo.png';
 
 const TEXT_CHANNEL_TYPES = [
     ChannelType.GuildText,
