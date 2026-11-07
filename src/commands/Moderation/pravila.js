@@ -4,14 +4,18 @@ import {
     ChannelType,
     MessageFlags,
     EmbedBuilder,
+    AttachmentBuilder,
 } from 'discord.js';
+import fs from 'node:fs';
+import path from 'node:path';
 import { successEmbed } from '../../utils/embeds.js';
 import { logger } from '../../utils/logger.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 
-// Ovde nalepi DIREKTAN link slike (mora počinjati sa https://i.imgur.com/ i završavati se sa .png ili .jpg)
-const SLIKA_LINK = 'https://i.postimg.cc/CMQ3vPwj/Glossy-Blue-B-PRAVILA-Esports-Logo.png';
+// Slika se šalje direktno kao fajl iz repoa (bez imgur/postimg linkova).
+// Fajl "pravila.png.png" mora biti u glavnom folderu repoa (pored package.json).
+const SLIKA_FAJL = path.join(process.cwd(), 'pravila.png.png');
 
 const TEXT_CHANNEL_TYPES = [
     ChannelType.GuildText,
@@ -101,10 +105,17 @@ export default {
                 .setTitle('PRAVILA SERVERA 📑')
                 .setDescription(PRAVILA)
                 .setThumbnail(interaction.client.user.displayAvatarURL({ size: 256 }))
-                .setImage(SLIKA_LINK)
                 .setColor(0x2b2d31);
 
-            sentMessage = await channel.send({ embeds: [embed] });
+            const files = [];
+            if (fs.existsSync(SLIKA_FAJL)) {
+                files.push(new AttachmentBuilder(SLIKA_FAJL, { name: 'pravila.png' }));
+                embed.setImage('attachment://pravila.png');
+            } else {
+                logger.warn('Pravila: slika nije pronađena', { path: SLIKA_FAJL });
+            }
+
+            sentMessage = await channel.send({ embeds: [embed], files });
         } catch (error) {
             logger.error('Pravila send failed', {
                 error: error?.message,
