@@ -12,29 +12,43 @@ import { logger } from '../../utils/logger.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 
-// Direktan link slike
-const SLIKA_LINK = 'https://i.postimg.cc/CMQ3vPwj/Glossy-Blue-B-PRAVILA-Esports-Logo.png';
+// Slika pravila
+const SLIKA_LINK =
+    'https://i.postimg.cc/CMQ3vPwj/Glossy-Blue-B-PRAVILA-Esports-Logo.png';
 
 const TEXT_CHANNEL_TYPES = [
     ChannelType.GuildText,
     ChannelType.GuildAnnouncement,
 ];
 
-const PRAVILA = `▫️ 🤠 **POŠTUJ SVE ČLANOVE**
-Budi pristojan i ljubazan. Uvrede, diskriminacija i govor mržnje nisu dozvoljeni.
+// Emoji zapisani Unicode formatom
+const EMOJI = {
+    cowboy: '\u{1F920}',
+    spam: '\u{1F3F7}\u{FE0F}',
+    adult: '\u{1F51E}',
+    warning: '\u{26A0}\u{FE0F}',
+    channels: '\u{1F5C2}\u{FE0F}',
+    no: '\u{1F6AB}',
+    bullet: '\u{25AB}\u{FE0F}',
+};
 
-▫️ 🏷️ **SPAM JE ZABRANJEN**
-Zabranjeno je spamovanje porukama, tagovima, linkovima ili emojijima.
-
-▫️ 🔞 **NEPRIMJEREN SADRŽAJ**
-Strogo zabranjeno. ⚠️
-To uključuje NSFW, nasilni, uvredljivi ili ilegalni sadržaj bilo koje vrste.
-
-▫️ 🗂️ **POŠTUJ KANALE**
-Koristi kanale prema njihovoj namjeni. Ne šalji poruke u pogrešne kanale.
-
-▫️ 🚫 **REKLAMIRANJE**
-Zabranjeno je dijeljenje linkova ka drugim serverima, sajtovima ili sadržaju bez odobrenja.`;
+const PRAVILA = [
+    `${EMOJI.bullet} ${EMOJI.cowboy} **POŠTUJ SVE ČLANOVE**`,
+    'Budi pristojan i ljubazan. Uvrede, diskriminacija i govor mržnje nisu dozvoljeni.',
+    '',
+    `${EMOJI.bullet} ${EMOJI.spam} **SPAM JE ZABRANJEN**`,
+    'Zabranjeno je spamovanje porukama, tagovima, linkovima ili emojijima.',
+    '',
+    `${EMOJI.bullet} ${EMOJI.adult} **NEPRIMJEREN SADRŽAJ**`,
+    `Strogo zabranjeno. ${EMOJI.warning}`,
+    'To uključuje NSFW, nasilni, uvredljivi ili ilegalni sadržaj bilo koje vrste.',
+    '',
+    `${EMOJI.bullet} ${EMOJI.channels} **POŠTUJ KANALE**`,
+    'Koristi kanale prema njihovoj namjeni. Ne šalji poruke u pogrešne kanale.',
+    '',
+    `${EMOJI.bullet} ${EMOJI.no} **REKLAMIRANJE**`,
+    'Zabranjeno je dijeljenje linkova ka drugim serverima, sajtovima ili sadržaju bez odobrenja.',
+].join('\n');
 
 function resolveTargetChannel(interaction) {
     const selected = interaction.options.getChannel('channel');
@@ -97,9 +111,9 @@ export default {
             });
         }
 
-        const botPermissions = channel.permissionsFor(
-            interaction.guild.members.me,
-        );
+        const botMember = interaction.guild.members.me;
+
+        const botPermissions = channel.permissionsFor(botMember);
 
         if (
             !botPermissions?.has(PermissionFlagsBits.SendMessages) ||
@@ -120,13 +134,23 @@ export default {
                 .setThumbnail(
                     interaction.client.user.displayAvatarURL({
                         size: 256,
+                        extension: 'png',
                     }),
                 )
                 .setImage(SLIKA_LINK)
                 .setColor(0x2b2d31);
 
+            console.log('[PRAVILA] Emoji test:', EMOJI);
+            console.log('[PRAVILA] Opis:', PRAVILA);
+
             sentMessage = await channel.send({
                 embeds: [embed],
+            });
+
+            logger.info('Pravila uspješno objavljena', {
+                guildId: interaction.guildId,
+                channelId: channel.id,
+                messageId: sentMessage.id,
             });
 
         } catch (error) {
