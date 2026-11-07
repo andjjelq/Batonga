@@ -36,12 +36,11 @@ export default {
                 );
 
                 const embedTitle = formatWelcomeMessage(
-                    welcomeConfig.leaveEmbed?.title || '👋 Goodbye',
+                    '👋 Doviđenja',
                     formatData
                 );
-                const embedFooter = welcomeConfig.leaveEmbed?.footer
-                    ? formatWelcomeMessage(welcomeConfig.leaveEmbed.footer, formatData)
-                    : `Pozdrav od ${guild.name}!`;
+                // Uvijek na srpskom (stara podešavanja iz baze mogu imati engleski tekst).
+                const embedFooter = `Pozdrav od ${guild.name}!`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 
@@ -147,3 +146,4 @@ export default {
     }
   }
 };
+
