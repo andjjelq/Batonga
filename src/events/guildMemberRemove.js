@@ -46,19 +46,19 @@ export default {
 
                 if (!canEmbed) {
                     await channel.send({
-                        content: welcomeConfig?.goodbyePing ? `<@${user.id}> ${goodbyeMessage}` : goodbyeMessage,
+                        content: `${user} nas je napustio/la`,
                         allowedMentions: welcomeConfig?.goodbyePing ? { users: [user.id] } : { parse: [] }
                     });
                 } else {
                     const embed = new EmbedBuilder()
-                    .setTitle(`${user.username} nas je napustio/la`)
-                    .setColor(welcomeConfig.leaveEmbed?.color || getColor('error'))
-                    .setThumbnail(user.displayAvatarURL())
-                    .addFields(
+                        .setDescription(`${user} nas je napustio/la`)
+                        .setColor(getColor('error'))
+                        .setThumbnail(user.displayAvatarURL())
+                        .addFields(
                             { name: 'Korisnik', value: user.username, inline: true },
                             { name: 'Broj članova', value: guild.memberCount.toString(), inline: true }
                         )
-                        .setFooter({ text: embedFooter });
+                        .setFooter({ text: `Pozdrav od ${guild.name}!` });
 
                     if (typeof welcomeConfig.leaveEmbed?.image === 'string') {
                         embed.setImage(welcomeConfig.leaveEmbed.image);
@@ -146,4 +146,5 @@ export default {
     }
   }
 };
+
 
