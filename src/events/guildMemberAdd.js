@@ -29,48 +29,33 @@ export default {
             // Skip only the welcome message if permissions are missing; the rest of the
             // join pipeline (auto-role, verification, logging, counters) must still run.
             if (permissions?.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])) {
-                const formatData = { user, guild, member };
-                const welcomeMessage = formatWelcomeMessage(
-                    welcomeConfig.welcomeMessage || welcomeConfig.welcomeEmbed?.description || botConfig.welcome?.defaultWelcomeMessage || 'Dobrodošao/la {user} na {server}!',
-                    formatData
-                );
-
-                // Tag novog člana uvijek stoji iznad poruke, a tekst ide ispod.
-                // Obavještenje (ping) dobija samo ako je "Ping" uključen u /greet dashboard.
-                const messageContent = user.toString();
-                const allowedMentions = welcomeConfig.welcomePing ? { users: [user.id] } : { parse: [] };
-
-                const embedTitle = `${user.username} je ušao/la na server`;
-                // Uvijek na srpskom (stara podešavanja iz baze mogu imati engleski tekst).
-                const embedFooter = `Dobrodošao/la na ${guild.name}!`;
-
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
+                const allowedMentions = welcomeConfig.welcomePing ? { users: [user.id] } : { parse: [] };
 
                 if (!canEmbed) {
                     await channel.send({
-                        content: `${messageContent}\n${welcomeMessage}`,
+                        content: `${user} je ušao/la na server`,
                         allowedMentions
                     });
                 } else {
                     const embed = new EmbedBuilder()
-                        .setColor(welcomeConfig.welcomeEmbed?.color || getColor('success'))
-                        .setTitle(embedTitle)
-                        .setDescription(welcomeMessage)
+                        .setDescription(`${user} je ušao/la na server`)
+                        .setColor(getColor('success'))
                         .setThumbnail(user.displayAvatarURL())
                         .addFields(
                             { name: 'Korisnik', value: user.username, inline: true },
                             { name: 'Broj članova', value: guild.memberCount.toString(), inline: true }
                         )
-                        .setFooter({ text: embedFooter });
-                    
+                        .setFooter({ text: `Dobrodošao/la na ${guild.name}!` });
+
                     if (welcomeConfig.welcomeImage) {
                         embed.setImage(welcomeConfig.welcomeImage);
                     } else if (welcomeConfig.welcomeEmbed?.image?.url) {
                         embed.setImage(welcomeConfig.welcomeEmbed.image.url);
                     }
-                    
+
                     await channel.send({
-                        content: messageContent,
+                        content: welcomeConfig.welcomePing ? `${user}` : undefined,
                         allowedMentions,
                         embeds: [embed]
                     });
