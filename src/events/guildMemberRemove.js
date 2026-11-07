@@ -59,7 +59,6 @@ export default {
                             { name: 'Korisnik', value: user.username, inline: true },
                             { name: 'Broj članova', value: guild.memberCount.toString(), inline: true }
                         )
-                        .setTimestamp()
                         .setFooter({ text: embedFooter });
 
                     if (typeof welcomeConfig.leaveEmbed?.image === 'string') {
