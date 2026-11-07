@@ -1,20 +1,19 @@
+
 import {
     SlashCommandBuilder,
     PermissionFlagsBits,
     ChannelType,
     MessageFlags,
     EmbedBuilder,
-    AttachmentBuilder,
 } from 'discord.js';
-import fs from 'node:fs';
-import path from 'node:path';
+
 import { successEmbed } from '../../utils/embeds.js';
 import { logger } from '../../utils/logger.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 
-// Tvoja slika iz repoa (glavni folder, pored package.json).
-const SLIKA_FAJL = path.join(process.cwd(), 'pravila.png.png');
+// Direktan link slike
+const SLIKA_LINK = 'https://i.postimg.cc/CMQ3vPwj/Glossy-Blue-B-PRAVILA-Esports-Logo.png';
 
 const TEXT_CHANNEL_TYPES = [
     ChannelType.GuildText,
@@ -39,11 +38,15 @@ Zabranjeno je dijeljenje linkova ka drugim serverima, sajtovima ili sadržaju be
 
 function resolveTargetChannel(interaction) {
     const selected = interaction.options.getChannel('channel');
+
     if (selected) {
         return selected;
     }
 
-    if (!interaction.channel || !TEXT_CHANNEL_TYPES.includes(interaction.channel.type)) {
+    if (
+        !interaction.channel ||
+        !TEXT_CHANNEL_TYPES.includes(interaction.channel.type)
+    ) {
         return null;
     }
 
@@ -57,19 +60,25 @@ export default {
         .addChannelOption((option) =>
             option
                 .setName('channel')
-                .setDescription('Kanal u koji se šalju pravila (podrazumijevano trenutni kanal)')
+                .setDescription('Kanal u koji se šalju pravila')
                 .addChannelTypes(...TEXT_CHANNEL_TYPES)
                 .setRequired(false),
         )
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .setDMPermission(false),
+
     category: 'moderation',
-    abuseProtection: { maxAttempts: 5, windowMs: 60_000 },
+
+    abuseProtection: {
+        maxAttempts: 5,
+        windowMs: 60_000,
+    },
 
     async execute(interaction) {
         const deferSuccess = await InteractionHelper.safeDefer(interaction, {
             flags: MessageFlags.Ephemeral,
         });
+
         if (!deferSuccess) {
             logger.warn('Pravila interaction defer failed', {
                 userId: interaction.user.id,
@@ -80,6 +89,7 @@ export default {
         }
 
         const channel = resolveTargetChannel(interaction);
+
         if (!channel) {
             return replyUserError(interaction, {
                 type: ErrorTypes.VALIDATION,
@@ -87,7 +97,10 @@ export default {
             });
         }
 
-        const botPermissions = channel.permissionsFor(interaction.guild.members.me);
+        const botPermissions = channel.permissionsFor(
+            interaction.guild.members.me,
+        );
+
         if (
             !botPermissions?.has(PermissionFlagsBits.SendMessages) ||
             !botPermissions?.has(PermissionFlagsBits.EmbedLinks)
@@ -99,32 +112,35 @@ export default {
         }
 
         let sentMessage;
+
         try {
             const embed = new EmbedBuilder()
                 .setTitle('PRAVILA SERVERA 📑')
                 .setDescription(PRAVILA)
-                .setThumbnail(interaction.client.user.displayAvatarURL({ size: 256 }))
+                .setThumbnail(
+                    interaction.client.user.displayAvatarURL({
+                        size: 256,
+                    }),
+                )
+                .setImage(SLIKA_LINK)
                 .setColor(0x2b2d31);
 
-            const files = [];
-            if (fs.existsSync(SLIKA_FAJL)) {
-                files.push(new AttachmentBuilder(SLIKA_FAJL, { name: 'pravila.png' }));
-                embed.setImage('attachment://pravila.png');
-            } else {
-                logger.warn('Pravila: slika nije pronađena', { path: SLIKA_FAJL });
-            }
+            sentMessage = await channel.send({
+                embeds: [embed],
+            });
 
-            sentMessage = await channel.send({ embeds: [embed], files });
         } catch (error) {
             logger.error('Pravila send failed', {
                 error: error?.message,
                 guildId: interaction.guildId,
                 channelId: channel.id,
             });
+
             await InteractionHelper.safeEditReply(interaction, {
                 content: 'Slanje pravila nije uspjelo. Provjeri dozvole bota u tom kanalu.',
                 flags: MessageFlags.Ephemeral,
             });
+
             return;
         }
 
@@ -139,3 +155,4 @@ export default {
         });
     },
 };
+
