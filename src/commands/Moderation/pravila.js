@@ -11,7 +11,7 @@ import { InteractionHelper } from '../../utils/interactionHelper.js';
 import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
 
 // Ovde nalepi DIREKTAN link slike (mora počinjati sa https://i.imgur.com/ i završavati se sa .png ili .jpg)
-const SLIKA_LINK = 'https://imgur.com/a/bQa3OjB';
+const SLIKA_LINK = 'https://postimg.cc/hQVGWmhv';
 
 const TEXT_CHANNEL_TYPES = [
     ChannelType.GuildText,
