@@ -1,4 +1,3 @@
-
 import {
     SlashCommandBuilder,
     PermissionFlagsBits,
@@ -140,6 +139,11 @@ export default {
                 .setImage(SLIKA_LINK)
                 .setColor(0x2b2d31);
 
+            // Bot inače briše emojije iz embedova (src/utils/embeds.js),
+            // pa naslov i tekst upisujemo direktno da emojiji ostanu.
+            embed.data.title = 'PRAVILA SERVERA 📑';
+            embed.data.description = PRAVILA;
+
             console.log('[PRAVILA] Emoji test:', EMOJI);
             console.log('[PRAVILA] Opis:', PRAVILA);
 
@@ -179,4 +183,3 @@ export default {
         });
     },
 };
-
