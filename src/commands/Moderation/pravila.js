@@ -128,7 +128,7 @@ export default {
 
         try {
             const embed = new EmbedBuilder()
-                .setTitle('PRAVILA SERVERA 📑')
+                .setTitle('PRAVILA SERVERA')
                 .setDescription(PRAVILA)
                 .setThumbnail(
                     interaction.client.user.displayAvatarURL({
@@ -141,7 +141,7 @@ export default {
 
             // Bot inače briše emojije iz embedova (src/utils/embeds.js),
             // pa naslov i tekst upisujemo direktno da emojiji ostanu.
-            embed.data.title = 'PRAVILA SERVERA 📑';
+            embed.data.title = 'PRAVILA SERVERA';
             embed.data.description = PRAVILA;
 
             console.log('[PRAVILA] Emoji test:', EMOJI);
