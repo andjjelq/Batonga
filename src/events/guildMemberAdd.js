@@ -49,6 +49,9 @@ export default {
                         )
                         .setFooter({ text: `Dobrodošao/la na ${guild.name}!` });
 
+                    // Bot inače briše emojije iz naslova, pa ga upisujemo direktno.
+                    embed.data.title = 'Dobrodošao/la! 🎉';
+
                     if (welcomeConfig.welcomeImage) {
                         embed.setImage(welcomeConfig.welcomeImage);
                     } else if (welcomeConfig.welcomeEmbed?.image?.url) {
