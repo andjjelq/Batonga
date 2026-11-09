@@ -39,6 +39,7 @@ export default {
                     });
                 } else {
                     const embed = new EmbedBuilder()
+                        .setTitle('Dobrodošao/la! 🎉')
                         .setDescription(`${user} je ušao/la na server`)
                         .setColor(getColor('success'))
                         .setThumbnail(user.displayAvatarURL())
